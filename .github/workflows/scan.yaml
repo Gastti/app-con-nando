@@ -20,3 +20,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  snyk:
+    name: Snyk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Install node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: SnykScan
+        run: npm install -g snyk
+      - name: "Auth Snyk"
+        run: snyk auth ${{ secrets.SNYK_API_TOKEN }}
+      - name: "Snyk Test"
+        run: snyk test --org=9f94440b-47e9-465c-8b77-c0216b08ac7a --severity-threshold=low
+      - name: "Snyk Monitor"
+        run: snyk monitor --org=9f94440b-47e9-465c-8b77-c0216b08ac7a
